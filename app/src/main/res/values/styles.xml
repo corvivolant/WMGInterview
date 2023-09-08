@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Widget.WMGInterview.FloatingActionButton.Large" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.WMGInterview.FloatingActionButton.Large</item>
+    </style>
+    <style name="ShapeAppearance.WMGInterview.FloatingActionButton.Large" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">100dp</item>
+    </style>
+</resources>

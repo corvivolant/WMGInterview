@@ -1,6 +1,8 @@
 package ca.corvivolant.wmginterview
 
+import android.animation.LayoutTransition
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import ca.corvivolant.wmginterview.databinding.FragmentFirstBinding
 import ca.corvivolant.wmginterview.models.ToDo
+import java.util.ArrayList
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -27,7 +30,7 @@ class FirstFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
         setupView()
@@ -38,6 +41,12 @@ class FirstFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mainViewModel.todoList.observe(viewLifecycleOwner) { todos ->
+            (binding.recyclerTodo.adapter as CheckboxAdapter).updateData(todos?.toCollection(arrayListOf()) ?: arrayListOf())
+        }
+        mainViewModel.completeList.observe(viewLifecycleOwner) { completes ->
+            (binding.recyclerCompleted.adapter as CheckboxAdapter).updateData(completes?.toCollection(arrayListOf()) ?: arrayListOf())
+        }
 
     }
 
@@ -47,12 +56,26 @@ class FirstFragment : Fragment() {
     }
 
     fun setupView() {
+        // Setup LayoutTransition to accept automatic default transition animations
+        binding.layout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
+
         // Setup To-Do recycler
         binding.recyclerTodo.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = CheckboxAdapter(arrayListOf(ToDo(false, "apple"), ToDo(false, "orange"), ToDo(false, "banana")))
+            adapter = CheckboxAdapter(arrayListOf(), CheckboxAdapter.ListItemType.TODO).apply {
+                checkboxListener = object : CheckboxAdapter.CheckboxListener {
+                    override fun onChecked(position: Int) {
+                        Log.d("onChecked", position.toString())
+                        mainViewModel.markComplete(position)
+                    }
+                }
+            }
         }
         // Setup Completed recycler
+        binding.recyclerCompleted.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = CheckboxAdapter(arrayListOf(), CheckboxAdapter.ListItemType.COMPLETE)
+        }
 
     }
 }

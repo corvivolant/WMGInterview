@@ -47,9 +47,10 @@ class MainActivity : AppCompatActivity() {
             val dialogLayout = inflater.inflate(R.layout.alert_todo, null)
             val editText = dialogLayout.findViewById<EditText>(R.id.edit_text)
             builder.setView(dialogLayout)
-            builder.setPositiveButton("OK") { dialog, _ ->
+            builder.setPositiveButton("Add") { dialog, _ ->
                 val enteredText = editText.text.toString()
                 // Do something with the entered text
+                mainViewModel.addToDo(enteredText)
                 dialog.dismiss()
             }
             builder.setNegativeButton("Cancel") { dialog, _ ->
@@ -57,7 +58,7 @@ class MainActivity : AppCompatActivity() {
             }
 
 // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
-            val dialog: AlertDialog? = builder?.create()
+            val dialog: AlertDialog? = builder.create()
             dialog?.show()
         }
     }
